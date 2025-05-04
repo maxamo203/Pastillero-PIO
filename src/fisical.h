@@ -28,6 +28,10 @@
 #define LCD_SDA_PIN 15
 #define LCD_SCL_PIN 16
 
+#define IN1_PIN_PUENTE_H 4
+#define IN2_PIN_PUENTE_H 2
+#define EN_PIN_PUENTE_H 15
+
 #define LCD_ADDRESS 0x27 // Dirección I2C del LCD (ajustar según el modelo)
 #define LCD_COLUMNS 16   // Número de columnas del LCD
 #define LCD_ROWS 2       // Número de filas del LCD
@@ -92,17 +96,39 @@ short writeBuzzer(short value)
  return 0;                        // Retorna 0 si la operación fue exitosa
 }
 
+void writeLCD(const char *message)
+{
+ // Wire.beginTransmission(LCD_ADDRESS); // Inicia la transmisión I2C
+ // Wire.write(message);                 // Envía el mensaje al LCD
+ // Wire.endTransmission();              // Finaliza la transmisión
+}
+void setupLCD()
+{
+ // Wire.begin(LCD_SDA_PIN, LCD_SCL_PIN); // Inicia la comunicación I2C con el LCD
+ // Wire.beginTransmission(LCD_ADDRESS);  // Inicia la transmisión I2C
+ // Wire.write(0x00);                     // Envía un comando al LCD (ajustar según el modelo)
+ // Wire.endTransmission();               // Finaliza la transmisión
+}
+void clearLCD()
+{
+ // Wire.beginTransmission(LCD_ADDRESS); // Inicia la transmisión I2C
+ // Wire.write(0x01);                    // Envía un comando para limpiar el LCD
+ // Wire.endTransmission();              // Finaliza la transmisión
+}
 void startMotorLeft()
 {
- // TODO: Implementar la función para iniciar el motor a la izquierda
+ digitalWrite(IN1_PIN_PUENTE_H, HIGH);
+ digitalWrite(EN_PIN_PUENTE_H, HIGH);
 }
 void startMotorRight()
 {
- // TODO: Implementar la función para iniciar el motor a la derecha
+ digitalWrite(IN2_PIN_PUENTE_H, HIGH);
+ digitalWrite(EN_PIN_PUENTE_H, HIGH);
 }
 void stopMotor()
 {
- // TODO: Implementar la función para detener el motor
+ digitalWrite(IN2_PIN_PUENTE_H, LOW);
+ digitalWrite(EN_PIN_PUENTE_H, LOW);
 }
 
 void fisicalSetup()
@@ -121,5 +147,8 @@ void fisicalSetup()
  pinMode(BUZZER_PIN, OUTPUT);       // Configura el zumbador como salida
  pinMode(POTENTIOMETER_PIN, INPUT); // Configura el potenciómetro como entrada
 
+ pinMode(IN1_PIN_PUENTE_H, OUTPUT);
+ pinMode(IN2_PIN_PUENTE_H, OUTPUT);
+ pinMode(EN_PIN_PUENTE_H, OUTPUT);
  setupLCD(); // Inicializa la pantalla LCD
 }

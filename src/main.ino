@@ -1,10 +1,9 @@
-#include <Arduino.h>
 #include "state_machine.h"
 
 void setup()
 {
  Serial.begin(9600);
- initialize();
+  initialize();
 }
 
 void loop()
