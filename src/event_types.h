@@ -12,38 +12,38 @@
 
 enum events
 {
- EV_TIME_SUNDAY_MORNING,
- EV_TIME_SUNDAY_AFTERNOON,
- EV_TIME_SUNDAY_NIGHT,
- EV_TIME_MONDAY_MORNING,
- EV_TIME_MONDAY_AFTERNOON,
- EV_TIME_MONDAY_NIGHT,
- EV_TIME_TUESDAY_MORNING,
- EV_TIME_TUESDAY_AFTERNOON,
- EV_TIME_TUESDAY_NIGHT,
- EV_TIME_WEDNESDAY_MORNING,
- EV_TIME_WEDNESDAY_AFTERNOON,
- EV_TIME_WEDNESDAY_NIGHT,
- EV_TIME_THURSDAY_MORNING,
- EV_TIME_THURSDAY_AFTERNOON,
- EV_TIME_THURSDAY_NIGHT,
- EV_TIME_FRIDAY_MORNING,
- EV_TIME_FRIDAY_AFTERNOON,
- EV_TIME_FRIDAY_NIGHT,
- EV_TIME_SATURDAY_MORNING,
- EV_TIME_SATURDAY_AFTERNOON,
- EV_TIME_SATURDAY_NIGHT,
- EV_BUTTON_1_TAP,
- EV_BUTTON_2_TAP,
- EV_BUTTON_3_TAP,
- EV_BUTTON_1_LONG_PRESS,
- EV_BUTTON_2_LONG_PRESS,
- EV_BUTTON_3_LONG_PRESS,
- EV_LIMIT_SWITCH_MOVING,
- EV_LIMIT_SWITCH_START,
- EV_PILL_DETECTED,
- EV_PILL_NOT_DETECTED,
- EV_CONT,
+    EV_TIME_SUNDAY_MORNING,
+    EV_TIME_SUNDAY_AFTERNOON,
+    EV_TIME_SUNDAY_NIGHT,
+    EV_TIME_MONDAY_MORNING,
+    EV_TIME_MONDAY_AFTERNOON,
+    EV_TIME_MONDAY_NIGHT,
+    EV_TIME_TUESDAY_MORNING,
+    EV_TIME_TUESDAY_AFTERNOON,
+    EV_TIME_TUESDAY_NIGHT,
+    EV_TIME_WEDNESDAY_MORNING,
+    EV_TIME_WEDNESDAY_AFTERNOON,
+    EV_TIME_WEDNESDAY_NIGHT,
+    EV_TIME_THURSDAY_MORNING,
+    EV_TIME_THURSDAY_AFTERNOON,
+    EV_TIME_THURSDAY_NIGHT,
+    EV_TIME_FRIDAY_MORNING,
+    EV_TIME_FRIDAY_AFTERNOON,
+    EV_TIME_FRIDAY_NIGHT,
+    EV_TIME_SATURDAY_MORNING,
+    EV_TIME_SATURDAY_AFTERNOON,
+    EV_TIME_SATURDAY_NIGHT,
+    EV_BUTTON_1_TAP,
+    EV_BUTTON_2_TAP,
+    EV_BUTTON_3_TAP,
+    EV_BUTTON_1_LONG_PRESS,
+    EV_BUTTON_2_LONG_PRESS,
+    EV_BUTTON_3_LONG_PRESS,
+    EV_LIMIT_SWITCH_MOVING,
+    EV_LIMIT_SWITCH_START,
+    EV_PILL_DETECTED,
+    EV_PILL_NOT_DETECTED,
+    EV_CONT,
 } new_event = EV_CONT;
 
 String events_s[] = {
@@ -101,71 +101,71 @@ short objetivePeriod = NO_PILL_TOOKING;
 
 bool movingForward = true; // It starts moving forward
 
-const short presenceSensorsArray[MAX_PILLS_PER_DAY] = {PRESENCE_PIN_1, PRESENCE_PIN_2, PRESENCE_PIN_3};
+short (*presenceSensorsArray[MAX_PILLS_PER_DAY])() = {readPresenceSensor_TM, readPresenceSensor_TT, readPresenceSensor_TN};
 short limitSwitchPassed = 0; // How many limit switches have been passed
 
 bool time_sensor()
 {
- int queueValue;
- if (timeEventsQueue != NULL && xQueueReceive(timeEventsQueue, &queueValue, 0) == pdTRUE) // If there is a value in the queue
- {
-  new_event = (events)queueValue;
-  return true;
- }
- return false;
+    int queueValue;
+    if (timeEventsQueue != NULL && xQueueReceive(timeEventsQueue, &queueValue, 0) == pdTRUE) // If there is a value in the queue
+    {
+        new_event = (events)queueValue;
+        return true;
+    }
+    return false;
 }
 bool button_1_sensor()
 {
- // TODO: Implementar la función para detectar el botón 1
- return false;
+    // TODO: Implementar la función para detectar el botón 1
+    return false;
 }
 bool button_2_sensor()
 {
- // TODO: Implementar la función para detectar el botón 2
- return false;
+    // TODO: Implementar la función para detectar el botón 2
+    return false;
 }
 bool button_3_sensor()
 {
- // TODO: Implementar la función para detectar el botón 3
- return false;
+    // TODO: Implementar la función para detectar el botón 3
+    return false;
 }
 bool limit_switch_moving_sensor()
 {
- if (objetiveDay == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta el interruptor de límite en movimiento
-  return false;
- if (limitSwitchPassed == objetiveDay + 1) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
- {
-  limitSwitchPassed = -limitSwitchPassed; // Reiniciar el contador de interruptores de límite pasados
-  new_event = EV_LIMIT_SWITCH_MOVING;     // Establecer el evento de interruptor de límite en movimiento
-  return true;                            // Se ha alcanzado el final del recorrido
- }
+    if (objetiveDay == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta el interruptor de límite en movimiento
+        return false;
+    if (limitSwitchPassed == objetiveDay + 1) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
+    {
+        limitSwitchPassed = -limitSwitchPassed; // Reiniciar el contador de interruptores de límite pasados
+        new_event = EV_LIMIT_SWITCH_MOVING;     // Establecer el evento de interruptor de límite en movimiento
+        return true;                            // Se ha alcanzado el final del recorrido
+    }
 
- // Alcanza el principio
- if (limitSwitchPassed == 0 && !movingForward)
- {
-  new_event = EV_LIMIT_SWITCH_START;
-  return true;
- }
- // TODO: Implementar la función para detectar el interruptor de límite en movimiento
- return false;
+    // Alcanza el principio
+    if (limitSwitchPassed == 0 && !movingForward)
+    {
+        new_event = EV_LIMIT_SWITCH_START;
+        return true;
+    }
+    // TODO: Implementar la función para detectar el interruptor de límite en movimiento
+    return false;
 }
 
 bool presence_sensor()
 {
- if (objetivePeriod == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta la presencia de pastillas
-  return false;
+    if (objetivePeriod == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta la presencia de pastillas
+        return false;
 
- short value = readPresenceSensor(presenceSensorsArray[objetivePeriod]);
- new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
- return true;
+    short value = presenceSensorsArray[objetivePeriod]();
+    new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+    return true;
 }
 
 void setDayAndPeriod()
 {
- if (new_event >= MAX_PERIODS)
- {
-  return;
- }
- objetiveDay = new_event / MAX_PILLS_PER_DAY;
- objetivePeriod = new_event % MAX_PILLS_PER_DAY;
+    if (new_event >= MAX_PERIODS)
+    {
+        return;
+    }
+    objetiveDay = new_event / MAX_PILLS_PER_DAY;
+    objetivePeriod = new_event % MAX_PILLS_PER_DAY;
 }

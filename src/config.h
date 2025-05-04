@@ -1,6 +1,4 @@
-#include "SD_MANAGER.h"
-
-#define MAX_PERIODS 21
+#include "Drivers/SD_Driver.h"
 
 #define PATH_SCHEDULE "/schedule.csv"
 
@@ -8,18 +6,13 @@
 void setDefaultConfig();
 void saveScheduleToSD();
 void readCsvConfig();
-
-String readSD(const char *);
-
 void printSchedule();
 void printCSVSchedule();
-
-tm schedule[MAX_PERIODS];
 
 void configSetup()
 {
  setupSD();
- if (!SD.exists("/schedule.csv"))
+ if (!SD.exists(PATH_SCHEDULE))
  {
   Serial.println("No config set, using defaults");
   setDefaultConfig();
@@ -168,5 +161,4 @@ void printCSVSchedule()
  file.close();
  Serial.println("--------------------------");
  Serial.println("Fin del archivo\n");
-
 }
