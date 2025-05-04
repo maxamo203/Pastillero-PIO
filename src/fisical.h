@@ -3,27 +3,31 @@
 //  It provides functions to read the state of these components and to write to the buzzer.
 // #include <Wire.h> // Librería para comunicación I2C
 #include "debug.h"
-#include "Drivers/LCD_Driver.h" // Librería para manejar el LCD
+#include "Drivers/LCD_Driver.h"           // Librería para manejar el LCD
+#include "Drivers/SD_Driver.h"            // Librería para manejar la SD
+#include "Drivers/CNY70_Driver.h"         // Librería para manejar el sensor de presencia CNY70
+#include "Drivers/Buzzer_Driver.h"        // Librería para manejar el zumbador
+#include "Drivers/Potentiometer_Driver.h" // Librería para manejar el potenciómetro
+#include "Drivers/LimitSwitch_Driver.h"   // Librería para manejar el fin de carrera
+#include "Drivers/Button_Driver.h"        // Librería para manejar los botones
+#include "Drivers/Engine_Driver.h"        // Librería para manejar el motor
+
 // Variables y valores
-#define BUTTON_1 2
-#define BUTTON_2 3
-#define BUTTON_3 4
+#define BUTTON_PIN 33
+#define PRESENCE_PIN_1 34
+#define PRESENCE_PIN_2 26
+#define PRESENCE_PIN_3 25
 
-#define PRESENCE_PIN_1 5
-#define PRESENCE_PIN_2 6
-#define PRESENCE_PIN_3 7
-
-#define PRESENCE_LED_1 10
-#define PRESENCE_LED_2 11
+#define PRESENCE_LED_1 27
+#define PRESENCE_LED_2 14
 #define PRESENCE_LED_3 12
 
 
 // Fines de carrera
-#define LIMIT_SWITCH_MOVIL 35
-#define LIMIT_SWITCH_START 9
+#define LIMIT_SWITCH_PIN 35
 
 #define BUZZER_PIN 13
-#define POTENTIOMETER_PIN 14
+#define POTENTIOMETER_PIN 32
 
 #define LCD_SDA_PIN 15
 #define LCD_SCL_PIN 16
@@ -36,94 +40,89 @@
 #define LCD_COLUMNS 16   // Número de columnas del LCD
 #define LCD_ROWS 2       // Número de filas del LCD
 
-short readPotentiometer();
-short readPresenceSensor(int pin);
-short readLimitSwitch(int pin);
-short readButton(int pin);
-short writeBuzzer(short value);
-void writeLCD(const char *message);
-void writeLCD(const char *message);
-void setupLCD();
-void clearLCD();
-void startMotorLeft();
-void startMotorRight();
-void stopMotor();
 void fisicalSetup();
+short readPresenceSensor_TM();
+short readPresenceSensor_TT();
+short readPresenceSensor_TN();
+short readLimitSwitch();
+short readButton();
+void startBuzzer();
+void stopBuzzer();
+short readPotentiometer();
+
+short buzzerVolume = 255;
+
+short readPresenceSensor_TM()
+{
+ return readCNY70(PRESENCE_PIN_1); // Lee el valor del sensor de presencia
+}
+short readPresenceSensor_TT()
+{
+ return readCNY70(PRESENCE_PIN_2); // Lee el valor del sensor de presencia
+}
+short readPresenceSensor_TN()
+{
+ return readCNY70(PRESENCE_PIN_3); // Lee el valor del sensor de presencia
+}
+
+short readLimitSwitch()
+{
+ return readLimitSwitch(LIMIT_SWITCH_PIN); // Lee el valor del fin de carrera
+}
+
+short readButton()
+{
+ return readButton(BUTTON_PIN); // Lee el valor del botón
+}
+
+void startBuzzer()
+{
+ writeBuzzer(BUZZER_PIN, buzzerVolume); // Enciende el zumbador con el volumen especificado
+}
+
+void stopBuzzer()
+{
+ writeBuzzer(BUZZER_PIN, 0); // Enciende el zumbador con el volumen especificado
+}
 
 short readPotentiometer()
 {
- int value = analogRead(POTENTIOMETER_PIN); // Lee el valor del potenciómetro
- return map(value, 0, 1023, 0, 100);        // Mapea el valor a un rango de 0 a 100
+ return readPotentiometer(POTENTIOMETER_PIN); // Lee el valor del potenciómetro
 }
-short readPresenceSensor(int pin)
+
+void setVolumeBuzzer(short volume)
 {
- if (pin != PRESENCE_PIN_1 && pin != PRESENCE_PIN_2 && pin != PRESENCE_PIN_3)
+ if (volume < 0 || volume > 255)
  {
-  DebugPrint("Error: Pin no válido para el sensor de presencia.");
-  return -1; // Retorna un valor de error si el pin no es válido
+  DebugPrint("Error: Volumen fuera de rango (0-255).");
+  return; // Retorna si el volumen está fuera de rango
  }
- int value = digitalRead(pin); // Lee el valor del sensor de presencia
- return value;                 // Devuelve el valor leído (0 o 1)
-}
-short readLimitSwitch(int pin)
-{
- if (pin != LIMIT_SWITCH_MOVIL && pin != LIMIT_SWITCH_START)
- {
-  DebugPrint("Error: Pin no válido para el fin de carrera.");
-  return -1; // Retorna un valor de error si el pin no es válido
- }
- int value = digitalRead(pin); // Lee el valor del fin de carrera
- return value;                 // Devuelve el valor leído (0 o 1)
-}
-short readButton(int pin)
-{
- if (pin != BUTTON_1 && pin != BUTTON_2 && pin != BUTTON_3)
- {
-  DebugPrint("Error: Pin no válido para el botón.");
-  return -1; // Retorna un valor de error si el pin no es válido
- }
- int value = digitalRead(pin); // Lee el valor del botón
- return value;                 // Devuelve el valor leído (0 o 1)
-}
-short writeBuzzer(short value)
-{
- if (value != 0 && value != 1)
- {
-  DebugPrint("Error: Valor no válido para el zumbador.");
-  return -1; // Retorna un valor de error si el valor no es válido
- }
- digitalWrite(BUZZER_PIN, value); // Escribe el valor en el zumbador
- return 0;                        // Retorna 0 si la operación fue exitosa
+ buzzerVolume = volume; // Asigna el nuevo volumen al zumbador
 }
 
 void startMotorLeft()
 {
- digitalWrite(IN1_PIN_PUENTE_H, HIGH);
- digitalWrite(EN_PIN_PUENTE_H, HIGH);
+ startMotorLeft(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor izquierdo
 }
+
 void startMotorRight()
 {
- digitalWrite(IN2_PIN_PUENTE_H, HIGH);
- digitalWrite(EN_PIN_PUENTE_H, HIGH);
+ startMotorRight(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor derecho
 }
 void stopMotor()
 {
- digitalWrite(IN2_PIN_PUENTE_H, LOW);
- digitalWrite(EN_PIN_PUENTE_H, LOW);
+ stopMotor(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Detiene el motor
 }
 
 void fisicalSetup()
 {
- pinMode(BUTTON_1, INPUT_PULLUP); // Configura el botón 1 como entrada con resistencia pull-up
- pinMode(BUTTON_2, INPUT_PULLUP); // Configura el botón 2 como entrada con resistencia pull-up
- pinMode(BUTTON_3, INPUT_PULLUP); // Configura el botón 3 como entrada con resistencia pull-up
+ pinMode(BUTTON_PIN, INPUT_PULLUP); // Configura el botón 1 como entrada con resistencia pull-up
 
  pinMode(PRESENCE_PIN_1, INPUT); // Configura el sensor de presencia 1 como entrada
  pinMode(PRESENCE_PIN_2, INPUT); // Configura el sensor de presencia 2 como entrada
  pinMode(PRESENCE_PIN_3, INPUT); // Configura el sensor de presencia 3 como entrada
 
- pinMode(LIMIT_SWITCH_MOVIL, INPUT_PULLUP); // Configura el fin de carrera 1 como entrada con resistencia pull-up
- pinMode(LIMIT_SWITCH_START, INPUT_PULLUP); // Configura el fin de carrera 2 como entrada con resistencia pull-up
+ pinMode(LIMIT_SWITCH_PIN, INPUT_PULLUP); // Configura el fin de carrera 1 como entrada con resistencia pull-up
 
  pinMode(BUZZER_PIN, OUTPUT);       // Configura el zumbador como salida
  pinMode(POTENTIOMETER_PIN, INPUT); // Configura el potenciómetro como entrada

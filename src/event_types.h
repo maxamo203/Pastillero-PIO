@@ -101,7 +101,7 @@ short objetivePeriod = NO_PILL_TOOKING;
 
 bool movingForward = true; // It starts moving forward
 
-const short presenceSensorsArray[MAX_PILLS_PER_DAY] = {PRESENCE_PIN_1, PRESENCE_PIN_2, PRESENCE_PIN_3};
+short (*presenceSensorsArray[MAX_PILLS_PER_DAY])() = {readPresenceSensor_TM, readPresenceSensor_TT, readPresenceSensor_TN};
 short limitSwitchPassed = 0; // How many limit switches have been passed
 
 long tct = 0;
@@ -161,7 +161,7 @@ bool presence_sensor()
  if (objetivePeriod == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta la presencia de pastillas
   return false;
 
- short value = readPresenceSensor(presenceSensorsArray[objetivePeriod]);
+ short value = presenceSensorsArray[objetivePeriod]();
  new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
  return true;
 }
