@@ -101,18 +101,18 @@ void setVolumeBuzzer(short volume)
  buzzerVolume = volume; // Asigna el nuevo volumen al zumbador
 }
 
-void startMotorLeft()
+void startEngineLeft()
 {
- startMotorLeft(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor izquierdo
+ startEngineLeft(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor izquierdo
 }
 
-void startMotorRight()
+void startEngineRight()
 {
- startMotorRight(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor derecho
+ startEngineRight(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor derecho
 }
-void stopMotor()
+void stopEngine()
 {
- stopMotor(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Detiene el motor
+ stopEngine(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Detiene el motor
 }
 
 void fisicalSetup()
