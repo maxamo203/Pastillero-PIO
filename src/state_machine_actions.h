@@ -68,6 +68,7 @@ void noScheduleSet();
 void settingSchedule();
 void awaitingTimer();
 void scanning() {
+  stopMotor();
   DebugPrint("Scanning");
 
   delay(100);

@@ -101,7 +101,7 @@ void handleTimerCallback(TimerHandle_t xTimer)
 
 volatile unsigned long lastInterruptTime = 0;
 
-void IRAM_ATTR detectMovingLimitSwitch() {
+void detectMovingLimitSwitch() {
     unsigned long interruptTime = millis();
     if (interruptTime - lastInterruptTime > 200) {  // 200 ms de debounce
         limitSwitchPassed++;
