@@ -97,10 +97,11 @@ void none()
 }
 void doseTaken()
 {
+  startMotorLeft();
 }
 void stopReturning()
 {
-  Serial.println("Stop returning...");
+  stopMotor();
 }
 void awaitingTimer()
 {
