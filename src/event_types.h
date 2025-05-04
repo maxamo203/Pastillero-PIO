@@ -89,7 +89,6 @@ bool button_3_sensor();
 bool limit_switch_moving_sensor();
 bool presence_sensor();
 
-int var = 60;
 
 //----------------------------------------------
 // The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PILLS_PER_DAY.
@@ -164,12 +163,9 @@ bool presence_sensor()
  if (objetivePeriod == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta la presencia de pastillas
   return false;
 
- 
-
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = var != 0 ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+ new_event = (value > PRECENSE_THRESHOLD)? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
 
- var--;
  return true;
 }
 
