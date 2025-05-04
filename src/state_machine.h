@@ -73,6 +73,7 @@ void get_new_event()
         index = (last_index_type_sensor % MAX_TYPE_EVENTS);
 
         last_index_type_sensor++;
+
         if (event_type[index]())
         {
             return;

@@ -1,11 +1,13 @@
 #pragma once
 #include "setup_utils.h"
+#include "config.h"
 
 typedef void (*action)();
 
 void showHourTimerLCD(void *)
 {
   short displayingCurrentTime = 1;
+
   while (1)
   {
     if (uxSemaphoreGetCount(showTimerSemaphore) > 0)
@@ -20,7 +22,7 @@ void showHourTimerLCD(void *)
       }
       else
       {
-        snprintf(mensaje, sizeof(mensaje), "Proxima toma: %02d:%02d", schedule[nextPeriod].tm_hour, schedule[nextPeriod].tm_min);
+        snprintf(mensaje, sizeof(mensaje), "Proxima toma: \n%02d:%02d", schedule[nextPeriod].tm_hour, schedule[nextPeriod].tm_min);
       }
 
       writeLCD(mensaje);
@@ -38,7 +40,7 @@ void showHourTimerLCD(void *)
 // Actions
 void initialize()
 {
-
+  /*
   int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY] = {
       {6, 14, 21}, // Domingo Mañana, Domingo Tarde, Domingo Noche
       {6, 0, 0},
@@ -47,16 +49,16 @@ void initialize()
       {0, 0, 0},
       {0, 0, 0},
       {0, 0, 0}};
+      */
+  configSetup();
 
   // Lee archivo con horarios y dias
   // Calcula el proximo horario y dia
   // Pasa al estado awaiting reminder time
   fisicalSetup();
-  attachInterrupt(LIMIT_SWITCH_MOVIL, detectMovingLimitSwitch, RISING);
+  attachInterrupt(LIMIT_SWITCH_PIN, detectMovingLimitSwitch, RISING);
   setupWifi();
   setupTime();
-
-  setupSchedule(scheduleSetup);
 
   createNewScheduledTimer();
   timeEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(events));
@@ -67,7 +69,13 @@ void initialize()
 void noScheduleSet();
 void settingSchedule();
 void awaitingTimer();
-void scanning();
+void scanning()
+{
+  stopMotor();
+  DebugPrint("Scanning");
+
+  delay(100);
+};
 void pillDetected();
 void noPillDetected();
 void doseTaken();
