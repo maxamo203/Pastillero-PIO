@@ -114,10 +114,6 @@ void moving()
   setDayAndPeriod();
   startMotorRight();
 }
-void scanning()
-{
-  Serial.println("Scanning...");
-}
 void pillDetected()
 {
   Serial.println("Pill detected...");
