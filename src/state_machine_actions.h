@@ -70,7 +70,10 @@ void awaitingTimer();
 void scanning();
 void pillDetected();
 void noPillDetected();
+void doseTaken();
+void stopReturning();
 void doseSkipped();
+
 void returnToHome()
 {
   startMotorLeft();
@@ -84,7 +87,13 @@ void error()
 void none()
 {
 }
-
+void doseTaken()
+{
+}
+void stopReturning()
+{
+  Serial.println("Stop returning...");
+}
 void awaitingTimer()
 {
   Serial.println("Awaiting timer...");
@@ -96,4 +105,30 @@ void moving()
   xSemaphoreTake(showTimerSemaphore, 0);
   setDayAndPeriod();
   startMotorRight();
+}
+void scanning()
+{
+  Serial.println("Scanning...");
+}
+void pillDetected()
+{
+  Serial.println("Pill detected...");
+}
+void noPillDetected()
+{
+  Serial.println("No pill detected...");
+}
+void doseSkipped()
+{
+  Serial.println("Dose skipped...");
+}
+void settingSchedule()
+{
+  Serial.println("Setting schedule...");
+  xSemaphoreGive(showTimerSemaphore);
+}
+void noScheduleSet()
+{
+  Serial.println("No schedule set...");
+  xSemaphoreGive(showTimerSemaphore);
 }
