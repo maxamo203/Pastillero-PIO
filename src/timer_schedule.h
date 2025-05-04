@@ -1,11 +1,12 @@
 #pragma once
 #include "time.h"
 #include "event_types.h"
+#include "timer_schedule.h"
 void searchNextSchedule(tm *timeinfo);
 int timeUntilNextSchedule(tm *timeinfo, tm *schedule);
 
 int nextPeriod = -1;
-tm schedule[MAX_PERIODS]; 
+tm schedule[MAX_PERIODS];
 
 bool isScheduleAvailable(tm *scheduleRecord)
 {
@@ -72,23 +73,26 @@ int timeUntilNextSchedule(tm *timeinfo, tm *schedule)
  return millisecondsUntilNextSchedule;
 }
 
-void setupSchedule(int[][] scheduleSetup) 
+void setupSchedule(int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY])
 {
- for(int i=0; i<MAX_DAYS; i++){
-  for(int j=0; j<MAX_PILLS_PER_DAY; j++){
-    if(scheduleSetup[i][j] != 0)
-    {
-      schedule[i+j] = (struct tm) {
-        .tm_hour = scheduleSetup[i][j];
-        .tm_wday = i;
-        .tm_isdst = 0;
-      };
-    } else 
-    {
-      schedule[i+j] = (struct tm) {
-        .tm_isdst = -1;
-      };
-    }
+ for (int i = 0; i < MAX_DAYS; i++)
+ {
+  for (int j = 0; j < MAX_PILLS_PER_DAY; j++)
+  {
+   int index = i * MAX_PILLS_PER_DAY + j;
+
+   if (scheduleSetup[i][j] != 0)
+   {
+    schedule[index] = (struct tm){
+        .tm_hour = scheduleSetup[i][j],
+        .tm_wday = i,
+        .tm_isdst = 0};
+   }
+   else
+   {
+    schedule[index] = (struct tm){
+        .tm_isdst = -1};
+   }
   }
  }
 }

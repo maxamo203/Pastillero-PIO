@@ -3,7 +3,7 @@
 #include "freeRTOS_Objects.h"
 
 #define MAX_EVENTS 32
-#define MAX_TYPE_EVENTS 7
+#define MAX_TYPE_EVENTS 6
 #define MAX_DAYS 7
 #define MAX_PILLS_PER_DAY 3
 #define MAX_PERIODS (MAX_PILLS_PER_DAY * MAX_DAYS)
@@ -87,22 +87,21 @@ bool button_1_sensor();
 bool button_2_sensor();
 bool button_3_sensor();
 bool limit_switch_moving_sensor();
-bool limit_switch_start_sensor();
 bool presence_sensor();
 
 //----------------------------------------------
-// The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PRESENCE_SENSORS.
+// The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PILLS_PER_DAY.
 void setDayAndPeriod();
 
 typedef bool (*eventType)();
-eventType event_type[MAX_TYPE_EVENTS] = {time_sensor, button_1_sensor, button_2_sensor, button_3_sensor, limit_switch_moving_sensor, limit_switch_start_sensor, presence_sensor};
+eventType event_type[MAX_TYPE_EVENTS] = {time_sensor, button_1_sensor, button_2_sensor, button_3_sensor, limit_switch_moving_sensor, presence_sensor};
 
 short objetiveDay = NO_PILL_TOOKING;
 short objetivePeriod = NO_PILL_TOOKING;
 
 bool movingForward = true; // It starts moving forward
 
-const short presenceSensorsArray[MAX_PRESENCE_SENSORS] = {PRESENCE_PIN_1, PRESENCE_PIN_2, PRESENCE_PIN_3};
+const short presenceSensorsArray[MAX_PILLS_PER_DAY] = {PRESENCE_PIN_1, PRESENCE_PIN_2, PRESENCE_PIN_3};
 short limitSwitchPassed = 0; // How many limit switches have been passed
 
 bool time_sensor()
@@ -167,6 +166,6 @@ void setDayAndPeriod()
  {
   return;
  }
- objetiveDay = new_event / MAX_PRESENCE_SENSORS;
- objetivePeriod = new_event % MAX_PRESENCE_SENSORS;
+ objetiveDay = new_event / MAX_PILLS_PER_DAY;
+ objetivePeriod = new_event % MAX_PILLS_PER_DAY;
 }

@@ -65,12 +65,6 @@ void writeLCD(const char *message)
  }
 }
 
-// Versión sobrecargada para String
-void writeLCD(const String &message)
-{
- writeLCD(message.c_str());
-}
-
 // Mueve el cursor a posición específica (0-based)
 void setCursorLCD(uint8_t col, uint8_t row)
 {

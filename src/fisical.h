@@ -3,6 +3,7 @@
 //  It provides functions to read the state of these components and to write to the buzzer.
 // #include <Wire.h> // Librería para comunicación I2C
 #include "debug.h"
+#include "Drivers/LCD_Driver.h" // Librería para manejar el LCD
 // Variables y valores
 #define BUTTON_1 2
 #define BUTTON_2 3
@@ -96,25 +97,6 @@ short writeBuzzer(short value)
  return 0;                        // Retorna 0 si la operación fue exitosa
 }
 
-void writeLCD(const char *message)
-{
- // Wire.beginTransmission(LCD_ADDRESS); // Inicia la transmisión I2C
- // Wire.write(message);                 // Envía el mensaje al LCD
- // Wire.endTransmission();              // Finaliza la transmisión
-}
-void setupLCD()
-{
- // Wire.begin(LCD_SDA_PIN, LCD_SCL_PIN); // Inicia la comunicación I2C con el LCD
- // Wire.beginTransmission(LCD_ADDRESS);  // Inicia la transmisión I2C
- // Wire.write(0x00);                     // Envía un comando al LCD (ajustar según el modelo)
- // Wire.endTransmission();               // Finaliza la transmisión
-}
-void clearLCD()
-{
- // Wire.beginTransmission(LCD_ADDRESS); // Inicia la transmisión I2C
- // Wire.write(0x01);                    // Envía un comando para limpiar el LCD
- // Wire.endTransmission();              // Finaliza la transmisión
-}
 void startMotorLeft()
 {
  digitalWrite(IN1_PIN_PUENTE_H, HIGH);
