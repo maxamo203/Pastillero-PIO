@@ -22,7 +22,6 @@
 #define PRESENCE_LED_2 14
 #define PRESENCE_LED_3 12
 
-// TODO: Agregar pines necesarios para el girarMotor
 
 // Fines de carrera
 #define LIMIT_SWITCH_PIN 35

@@ -95,4 +95,14 @@ void setupSchedule(int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY])
    }
   }
  }
+
+
+ /* Con fines de debug, modificar este horario para probar, 2 es domingo noche */
+
+ schedule[2] = (struct tm) {
+  .tm_min = 24,
+  .tm_hour = 16,
+  .tm_wday = 0,
+  .tm_isdst = 0
+ };
 }

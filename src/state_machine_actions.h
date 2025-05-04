@@ -60,8 +60,6 @@ void initialize()
  setupWifi();
  setupTime();
 
- // setupSchedule(scheduleSetup);
-
  createNewScheduledTimer();
  timeEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(events));
  showTimerSemaphore = xSemaphoreCreateMutex();
@@ -71,7 +69,12 @@ void initialize()
 void noScheduleSet();
 void settingSchedule();
 void awaitingTimer();
-void scanning();
+void scanning() {
+  stopMotor();
+  DebugPrint("Scanning");
+
+  delay(100);
+};
 void pillDetected();
 void noPillDetected();
 void doseSkipped();

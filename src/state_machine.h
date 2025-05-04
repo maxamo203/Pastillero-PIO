@@ -42,7 +42,7 @@ String states_s[MAX_STATES] = {
 action state_table_action[MAX_STATES][MAX_EVENTS] = {
     {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, awaitingTimer},                                  /*ST_INIT*/
     {moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, moving, none, none, none, none, none, none, none, none, none, none, none}, /*ST_AWAITING_REMINDER_TIME*/
-    {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none},                                           /*ST_MOVING_TO_PILL_POS*/
+    {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, scanning, none, none, none, none},                                           /*ST_MOVING_TO_PILL_POS*/
     {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none},                                           /*ST_STOP_MOVING*/
     {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none},                                           /*ST_SCANNING_AT_PILL_POS*/
     {none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none, none},                                           /*ST_PILLS_DETECTED*/
@@ -82,6 +82,7 @@ void get_new_event()
         index = (last_index_type_sensor % MAX_TYPE_EVENTS);
 
         last_index_type_sensor++;
+
         if (event_type[index]())
         {
             return;

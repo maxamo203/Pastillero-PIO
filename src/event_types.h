@@ -104,8 +104,14 @@ bool movingForward = true; // It starts moving forward
 short (*presenceSensorsArray[MAX_PILLS_PER_DAY])() = {readPresenceSensor_TM, readPresenceSensor_TT, readPresenceSensor_TN};
 short limitSwitchPassed = 0; // How many limit switches have been passed
 
+long tct = 0;
 bool time_sensor()
 {
+  if(millis()- tct > 10000){
+    tct = millis();
+    new_event = EV_TIME_SUNDAY_NIGHT;
+    return true;
+  }
  int queueValue;
  if (timeEventsQueue != NULL && xQueueReceive(timeEventsQueue, &queueValue, 0) == pdTRUE) // If there is a value in the queue
  {
@@ -133,7 +139,7 @@ bool limit_switch_moving_sensor()
 {
  if (objetiveDay == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta el interruptor de límite en movimiento
   return false;
- if (limitSwitchPassed == objetiveDay + 1) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
+ if (limitSwitchPassed == objetiveDay ) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
  {
   limitSwitchPassed = -limitSwitchPassed; // Reiniciar el contador de interruptores de límite pasados
   new_event = EV_LIMIT_SWITCH_MOVING;     // Establecer el evento de interruptor de límite en movimiento
@@ -166,6 +172,6 @@ void setDayAndPeriod()
  {
   return;
  }
- objetiveDay = new_event / MAX_PILLS_PER_DAY;
+ objetiveDay = (new_event / MAX_PILLS_PER_DAY) + 1;
  objetivePeriod = new_event % MAX_PILLS_PER_DAY;
 }
