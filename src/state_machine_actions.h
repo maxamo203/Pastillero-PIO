@@ -52,7 +52,7 @@ void initialize()
   // Calcula el proximo horario y dia
   // Pasa al estado awaiting reminder time
   fisicalSetup();
-  attachInterrupt(LIMIT_SWITCH_MOVIL, detectMovingLimitSwitch, RISING);
+  attachInterrupt(LIMIT_SWITCH_MOVIL, detectMovingLimitSwitch, FALLING);
   setupWifi();
   setupTime();
 
@@ -67,7 +67,11 @@ void initialize()
 void noScheduleSet();
 void settingSchedule();
 void awaitingTimer();
-void scanning();
+void scanning() {
+  DebugPrint("Scanning");
+
+  delay(100);
+};
 void pillDetected();
 void noPillDetected();
 void doseSkipped();
@@ -95,5 +99,6 @@ void moving()
   Serial.println("Moving...");
   xSemaphoreTake(showTimerSemaphore, 0);
   setDayAndPeriod();
+  DebugPrint(objetiveDay);
   startMotorRight();
 }

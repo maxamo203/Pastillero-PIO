@@ -166,6 +166,6 @@ void setDayAndPeriod()
  {
   return;
  }
- objetiveDay = new_event / MAX_PILLS_PER_DAY;
+ objetiveDay = (new_event / MAX_PILLS_PER_DAY) + 1;
  objetivePeriod = new_event % MAX_PILLS_PER_DAY;
 }
