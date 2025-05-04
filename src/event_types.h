@@ -89,6 +89,7 @@ bool button_3_sensor();
 bool limit_switch_moving_sensor();
 bool presence_sensor();
 
+
 //----------------------------------------------
 // The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PILLS_PER_DAY.
 void setDayAndPeriod();
@@ -142,7 +143,8 @@ bool limit_switch_moving_sensor()
  if (limitSwitchPassed == objetiveDay ) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
  {
   limitSwitchPassed = -limitSwitchPassed; // Reiniciar el contador de interruptores de límite pasados
-  new_event = EV_LIMIT_SWITCH_MOVING;     // Establecer el evento de interruptor de límite en movimiento
+  new_event = EV_LIMIT_SWITCH_MOVING;
+  movingForward = false;     // Establecer el evento de interruptor de límite en movimiento
   return true;                            // Se ha alcanzado el final del recorrido
  }
 
@@ -162,7 +164,8 @@ bool presence_sensor()
   return false;
 
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+ new_event = (value > PRECENSE_THRESHOLD)? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+
  return true;
 }
 

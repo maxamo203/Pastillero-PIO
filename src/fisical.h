@@ -102,16 +102,16 @@ void setVolumeBuzzer(short volume)
 
 void startMotorLeft()
 {
- startMotorLeft(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor izquierdo
+ startMotorLeft(EN_PIN_PUENTE_H, IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H); // Inicia el motor izquierdo
 }
 
 void startMotorRight()
 {
- startMotorRight(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Inicia el motor derecho
+ startMotorRight(EN_PIN_PUENTE_H, IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H); // Inicia el motor derecho
 }
 void stopMotor()
 {
- stopMotor(IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H, EN_PIN_PUENTE_H); // Detiene el motor
+ stopMotor(EN_PIN_PUENTE_H, IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H); // Detiene el motor
 }
 
 void fisicalSetup()

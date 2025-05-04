@@ -17,4 +17,6 @@ void startMotorRight(int pinPWM, int pinEngine1, int pinEngine2)
 void stopMotor(int pinPWM, int pinEngine1, int pinEngine2)
 {
  digitalWrite(pinPWM, LOW);
+ digitalWrite(pinEngine1, LOW);
+ digitalWrite(pinEngine2, LOW);
 }
