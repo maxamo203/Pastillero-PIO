@@ -104,6 +104,8 @@ void doseTaken()
 void stopReturning()
 {
   stopMotor();
+  xSemaphoreGive(showTimerSemaphore);
+  Serial.println("Stop returning...");
 }
 void awaitingTimer()
 {
@@ -114,15 +116,18 @@ void moving()
 {
   Serial.println("Moving...");
   xSemaphoreTake(showTimerSemaphore, 0);
+  writeLCD("Moving...");
   setDayAndPeriod();
   startMotorRight();
 }
 void pillDetected()
 {
+  writeLCD("Pill detected");
   Serial.println("Pill detected...");
 }
 void noPillDetected()
 {
+  writeLCD("No pill detected");
   Serial.println("No pill detected...");
 }
 void doseSkipped()

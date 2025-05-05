@@ -110,7 +110,7 @@ bool time_sensor()
  if (millis() - tct > 10000)
  {
   tct = millis();
-  new_event = EV_TIME_SUNDAY_NIGHT;
+  // new_event = EV_TIME_SUNDAY_NIGHT;
   return true;
  }
  int queueValue;

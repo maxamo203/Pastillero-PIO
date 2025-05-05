@@ -70,14 +70,14 @@ void createNewScheduledTimer()
 {
 
  getLocalTime(&timeinfo, 5); // Update RTC time
-
+ Serial.println(String(nextPeriod) + " nextPeriod antes");
  searchNextSchedule(&timeinfo); // Set nextPeriod to the next schedule based on the current time
-
+ Serial.println(String(nextPeriod) + " nextPeriod despues");
  const int timeUntilNextScheduleValue = timeUntilNextSchedule(&timeinfo, &schedule[nextPeriod]); // Calculate time until next schedule
 
- Serial.println(timeUntilNextScheduleValue);
+ Serial.println(String(timeUntilNextScheduleValue) + " ms until next schedule");
  xTimer = xTimerCreate("ScheduleTime", pdMS_TO_TICKS(timeUntilNextScheduleValue), pdFALSE, NULL, handleTimerCallback);
-
+ Serial.println("Timer created");
  if (xTimer != NULL)
  {
   xTimerStart(xTimer, 0);
