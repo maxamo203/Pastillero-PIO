@@ -57,11 +57,13 @@ void initialize()
   // Pasa al estado awaiting reminder time
   fisicalSetup();
   attachInterrupt(LIMIT_SWITCH_PIN, detectMovingLimitSwitch, RISING);
+  attachInterrupt(BUTTON_PIN, detectButtonPress, RISING); // Configura la interrupción para el botón
   setupWifi();
   setupTime();
 
   createNewScheduledTimer();
   timeEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(events));
+  buttonEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(short));
   showTimerSemaphore = xSemaphoreCreateMutex();
   xTaskCreate(showHourTimerLCD, "showHourTimerLCD", 2048, NULL, 1, NULL);
 }

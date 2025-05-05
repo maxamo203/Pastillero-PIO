@@ -100,12 +100,25 @@ void handleTimerCallback(TimerHandle_t xTimer)
 }
 
 volatile unsigned long lastInterruptTime = 0;
-
-void detectMovingLimitSwitch() {
-    unsigned long interruptTime = millis();
-    if (interruptTime - lastInterruptTime > 200) {  // 200 ms de debounce
-        limitSwitchPassed++;
-        lastInterruptTime = interruptTime;
-    }
+volatile unsigned long lastButtonPressTime = 0;
+void detectMovingLimitSwitch()
+{
+ unsigned long interruptTime = millis();
+ if (interruptTime - lastInterruptTime > 200)
+ { // 200 ms de debounce
+  limitSwitchPassed++;
+  lastInterruptTime = interruptTime;
+ }
 }
 
+// TODO: not working fine
+void detectButtonPress()
+{
+ // unsigned long interruptTime = millis();
+ // if (interruptTime - lastButtonPressTime > 10)
+ {                                  // 200 ms de debounce
+  short buttonState = readButton(); // Lee el estado del botón
+  // lastButtonPressTime = interruptTime;
+  xQueueSend(buttonEventsQueue, &buttonState, 0); // Enviar evento de botón a la cola
+ }
+}

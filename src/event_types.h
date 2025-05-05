@@ -89,7 +89,6 @@ bool button_3_sensor();
 bool limit_switch_moving_sensor();
 bool presence_sensor();
 
-
 //----------------------------------------------
 // The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PILLS_PER_DAY.
 void setDayAndPeriod();
@@ -108,11 +107,12 @@ short limitSwitchPassed = 0; // How many limit switches have been passed
 long tct = 0;
 bool time_sensor()
 {
-  if(millis()- tct > 10000){
-    tct = millis();
-    new_event = EV_TIME_SUNDAY_NIGHT;
-    return true;
-  }
+ if (millis() - tct > 10000)
+ {
+  tct = millis();
+  new_event = EV_TIME_SUNDAY_NIGHT;
+  return true;
+ }
  int queueValue;
  if (timeEventsQueue != NULL && xQueueReceive(timeEventsQueue, &queueValue, 0) == pdTRUE) // If there is a value in the queue
  {
@@ -121,9 +121,37 @@ bool time_sensor()
  }
  return false;
 }
+long ctStartPressed = 0;
+short previousButtonState = 0;
 bool button_1_sensor()
 {
- // TODO: Implementar la función para detectar el botón 1
+ short buttonState;
+ if (xQueueReceive(buttonEventsQueue, &buttonState, 0) != pdTRUE) // Read the button state from the queue
+ {
+  return false; // No button event received
+ }
+ Serial.println("Button 1 pressed: " + String(buttonState));
+ if (buttonState == 1 && previousButtonState == 0) // Button pressed
+ {
+  ctStartPressed = millis(); // Start timer
+  previousButtonState = buttonState;
+  return false;
+ }
+ if (buttonState == 0 && previousButtonState == 1) // Button released
+ {
+  if (millis() - ctStartPressed > 1000) // Long press
+  {
+   new_event = EV_BUTTON_1_LONG_PRESS;
+   previousButtonState = buttonState;
+   return true;
+  }
+  else // Short press
+  {
+   new_event = EV_BUTTON_1_TAP;
+   previousButtonState = buttonState;
+   return true;
+  }
+ }
  return false;
 }
 bool button_2_sensor()
@@ -140,12 +168,12 @@ bool limit_switch_moving_sensor()
 {
  if (objetiveDay == NO_PILL_TOOKING) // Si no hay un ciclo de recordatorio activo, no se detecta el interruptor de límite en movimiento
   return false;
- if (limitSwitchPassed == objetiveDay ) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
+ if (limitSwitchPassed == objetiveDay) // Si el número de interruptores de límite pasados es igual al día objetivo, se ha alcanzado el final del recorrido
  {
   limitSwitchPassed = -limitSwitchPassed; // Reiniciar el contador de interruptores de límite pasados
   new_event = EV_LIMIT_SWITCH_MOVING;
-  movingForward = false;     // Establecer el evento de interruptor de límite en movimiento
-  return true;                            // Se ha alcanzado el final del recorrido
+  movingForward = false; // Establecer el evento de interruptor de límite en movimiento
+  return true;           // Se ha alcanzado el final del recorrido
  }
 
  // Alcanza el principio
@@ -164,7 +192,7 @@ bool presence_sensor()
   return false;
 
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = (value > PRECENSE_THRESHOLD)? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+ new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
 
  return true;
 }

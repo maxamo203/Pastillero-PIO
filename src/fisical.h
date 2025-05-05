@@ -13,10 +13,10 @@
 #include "Drivers/Engine_Driver.h"        // Librería para manejar el motor
 
 // Variables y valores
-#define BUTTON_PIN 33
+#define BUTTON_PIN 26
 #define PRESENCE_PIN_1 34
 #define PRESENCE_PIN_2 35
-#define PRESENCE_PIN_3 26
+#define PRESENCE_PIN_3 32
 
 #define PRESENCE_LED_1 27
 #define PRESENCE_LED_2 14
@@ -26,7 +26,7 @@
 #define LIMIT_SWITCH_PIN 25
 
 #define BUZZER_PIN 13
-#define POTENTIOMETER_PIN 32
+#define POTENTIOMETER_PIN 33
 
 #define LCD_SDA_PIN 15
 #define LCD_SCL_PIN 16
