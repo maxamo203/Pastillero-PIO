@@ -125,12 +125,12 @@ long ctStartPressed = 0;
 short previousButtonState = 0;
 bool button_1_sensor()
 {
- short buttonState;
- if (xQueueReceive(buttonEventsQueue, &buttonState, 0) != pdTRUE) // Read the button state from the queue
- {
-  return false; // No button event received
- }
- Serial.println("Button 1 pressed: " + String(buttonState));
+ short buttonState = readButton(); // Read the button state
+                                   //  if (xQueueReceive(buttonEventsQueue, &buttonState, 0) != pdTRUE) // Read the button state from the queue
+                                   //  {
+                                   //   return false; // No button event received
+                                   //  }
+ // Serial.println("Button 1 pressed: " + String(buttonState));
  if (buttonState == 1 && previousButtonState == 0) // Button pressed
  {
   ctStartPressed = millis(); // Start timer
@@ -139,7 +139,7 @@ bool button_1_sensor()
  }
  if (buttonState == 0 && previousButtonState == 1) // Button released
  {
-  if (millis() - ctStartPressed > 1000) // Long press
+  if (millis() - ctStartPressed > 500) // Long press
   {
    new_event = EV_BUTTON_1_LONG_PRESS;
    previousButtonState = buttonState;

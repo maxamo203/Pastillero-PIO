@@ -89,6 +89,19 @@ short readPotentiometer()
  return readPotentiometer(POTENTIOMETER_PIN); // Lee el valor del potenciómetro
 }
 
+void setLedPresence_TM(short value)
+{
+ digitalWrite(PRESENCE_LED_1, value); // Enciende o apaga el LED del sensor de presencia 1
+}
+void setLedPresence_TT(short value)
+{
+ digitalWrite(PRESENCE_LED_2, value); // Enciende o apaga el LED del sensor de presencia 2
+}
+void setLedPresence_TN(short value)
+{
+ digitalWrite(PRESENCE_LED_3, value); // Enciende o apaga el LED del sensor de presencia 3
+}
+
 void setVolumeBuzzer(short volume)
 {
  if (volume < 0 || volume > 255)

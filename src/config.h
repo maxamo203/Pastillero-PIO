@@ -35,8 +35,8 @@ void setDefaultConfig()
  schedule[2] = {0, 59, 23, 0, 0, 0, 0, 0};  // Noche
  // Lunes
  schedule[3] = {0, 6, 0, 0, 0, 0, 1, 0};
- schedule[4] = {0, 0, 14, 0, 0, 0, 1, 0};
- schedule[5] = {0, 0, 21, 0, 0, 0, 1, 0};
+ schedule[4] = {0, 2, 18, 0, 0, 0, 1, 0};
+ schedule[5] = {0, 40, 17, 0, 0, 0, 1, 0};
  // Martes
  schedule[6] = {0, 0, 6, 0, 0, 0, 2, 0};
  schedule[7] = {0, 0, 14, 0, 0, 0, 2, 0};

@@ -14,6 +14,8 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = -4 * 3600;
 const int daylightOffset_sec = 3600;
 
+const char *weekDays[] = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
+
 void handleTimerCallback(TimerHandle_t xTimer);
 void createNewScheduledTimer();
 /*
@@ -116,9 +118,10 @@ void detectButtonPress()
 {
  // unsigned long interruptTime = millis();
  // if (interruptTime - lastButtonPressTime > 10)
- {                                  // 200 ms de debounce
-  short buttonState = readButton(); // Lee el estado del botón
-  // lastButtonPressTime = interruptTime;
-  xQueueSend(buttonEventsQueue, &buttonState, 0); // Enviar evento de botón a la cola
- }
+ //  {
+ // 200 ms de debounce
+ short buttonState = readButton(); // Lee el estado del botón
+ // lastButtonPressTime = interruptTime;
+ xQueueSend(buttonEventsQueue, &buttonState, 0); // Enviar evento de botón a la cola
+                                                 //  }
 }
