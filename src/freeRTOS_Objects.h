@@ -4,4 +4,5 @@
 
 TimerHandle_t xTimer = NULL;
 QueueHandle_t timeEventsQueue = NULL;
+QueueHandle_t buttonEventsQueue = NULL;
 SemaphoreHandle_t showTimerSemaphore = NULL;

@@ -30,9 +30,9 @@ void configSetup()
 void setDefaultConfig()
 {
  // Domingo
- schedule[0] = {0, 6, 0, 0, 0, 0, 0, -1};  // Mañana
- schedule[1] = {0, 14, 0, 0, 0, 0, 0, -1}; // Tarde
- schedule[2] = {0, 21, 0, 0, 0, 0, 0, 0};  // Noche
+ schedule[0] = {0, 0, 6, 0, 0, 0, 0, -1};  // Mañana
+ schedule[1] = {0, 0, 14, 0, 0, 0, 0, -1}; // Tarde
+ schedule[2] = {0, 59, 23, 0, 0, 0, 0, 0};  // Noche
  // Lunes
  schedule[3] = {0, 6, 0, 0, 0, 0, 1, 0};
  schedule[4] = {0, 0, 14, 0, 0, 0, 1, 0};

@@ -36,11 +36,15 @@ void searchNextSchedule(tm *timeinfo)
  int currentWeekDay = timeinfo->tm_wday; // Día actual de la semana (0-6, donde 0 es domingo)
  int currentHour = timeinfo->tm_hour;    // Hora actual (0-23)
  int currentMinute = timeinfo->tm_min;   // Minuto actual (0-59)
-
+ Serial.println(currentMinute);
  for (int i = 0; i < MAX_PERIODS; i++)
  {
-  if (isScheduleAvailable(&schedule[i]) && schedule[i].tm_wday >= currentWeekDay && (schedule[i].tm_hour > currentHour || (schedule[i].tm_hour == currentHour && schedule[i].tm_min > currentMinute)))
+  if (schedule[i].tm_wday < currentWeekDay)
+   continue;
+  if (isScheduleAvailable(&schedule[i]) && schedule[i].tm_wday > currentWeekDay ||
+      (schedule[i].tm_hour > currentHour || (schedule[i].tm_hour == currentHour && schedule[i].tm_min > currentMinute)))
   {
+   Serial.println("Nuevo horario encontrado");
    nextPeriod = i;
    return;
   }
@@ -96,13 +100,11 @@ void setupSchedule(int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY])
   }
  }
 
-
  /* Con fines de debug, modificar este horario para probar, 2 es domingo noche */
 
- schedule[2] = (struct tm) {
-  .tm_min = 24,
-  .tm_hour = 16,
-  .tm_wday = 0,
-  .tm_isdst = 0
- };
+ schedule[2] = (struct tm){
+     .tm_min = 24,
+     .tm_hour = 16,
+     .tm_wday = 0,
+     .tm_isdst = 0};
 }
