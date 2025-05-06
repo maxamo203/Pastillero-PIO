@@ -2,7 +2,6 @@
 #include "fisical.h"
 #include "freeRTOS_Objects.h"
 
-
 #define MAX_EVENTS 34
 #define MAX_TYPE_EVENTS 7
 #define INVERSE_PRESENCE_SENSOR 1 // 0-->Hay pastilla, 1-->No hay pastilla
@@ -12,7 +11,7 @@
 #define MAX_PERIODS (MAX_PILLS_PER_DAY * MAX_DAYS)
 #define PRECENSE_THRESHOLD 100 // Valor de umbral para detectar la presencia de pastillas
 #define NO_PILL_TOOKING -1
-
+#define LONG_PRESS_TIME 500 // Tiempo de presión larga en milisegundos
 enum events
 {
  EV_TIME_SUNDAY_MORNING,
@@ -112,15 +111,8 @@ bool movingForward = true; // It starts moving forward
 short (*presenceSensorsArray[MAX_PILLS_PER_DAY])() = {readPresenceSensor_TM, readPresenceSensor_TT, readPresenceSensor_TN};
 short limitSwitchPassed = 0; // How many limit switches have been passed
 
-long tct = 0;
 bool time_sensor()
 {
- if (millis() - tct > 10000)
- {
-  tct = millis();
-  // new_event = EV_TIME_SUNDAY_NIGHT;
-  return true;
- }
  int queueValue;
  if (timeEventsQueue != NULL && xQueueReceive(timeEventsQueue, &queueValue, 0) == pdTRUE) // If there is a value in the queue
  {
@@ -129,25 +121,21 @@ bool time_sensor()
  }
  return false;
 }
-long ctStartPressed = 0;
-short previousButtonState = 0;
+long ctStartPressed = LOW;
+short previousButtonState = LOW;
 bool button_1_sensor()
 {
  short buttonState = readButton(); // Read the button state
-                                   //  if (xQueueReceive(buttonEventsQueue, &buttonState, 0) != pdTRUE) // Read the button state from the queue
-                                   //  {
-                                   //   return false; // No button event received
-                                   //  }
- // Serial.println("Button 1 pressed: " + String(buttonState));
- if (buttonState == 1 && previousButtonState == 0) // Button pressed
+
+ if (buttonState == HIGH && previousButtonState == LOW) // Button pressed
  {
   ctStartPressed = millis(); // Start timer
   previousButtonState = buttonState;
   return false;
  }
- if (buttonState == 0 && previousButtonState == 1) // Button released
+ if (buttonState == LOW && previousButtonState == HIGH) // Button released
  {
-  if (millis() - ctStartPressed > 500) // Long press
+  if (millis() - ctStartPressed > LONG_PRESS_TIME) // Long press
   {
    new_event = EV_BUTTON_1_LONG_PRESS;
    previousButtonState = buttonState;
@@ -185,7 +173,7 @@ bool limit_switch_moving_sensor()
  }
 
  // Alcanza el principio
- if (limitSwitchPassed == 0 && !movingForward)
+ if (limitSwitchPassed == LOW && !movingForward)
  {
   new_event = EV_LIMIT_SWITCH_START;
   return true;
@@ -196,23 +184,23 @@ bool limit_switch_moving_sensor()
 
 bool potentiometer_sensor()
 {
-  long potentiometerNewValue = readPotentiometer();
+ long potentiometerNewValue = readPotentiometer();
 
-  if(potentiometerNewValue > potentiometerLastValue)
-  {
-    potentiometerLastValue = potentiometerNewValue;
-    new_event = EV_POT_INCREASED;
-    return true;
-  }
+ if (potentiometerNewValue > potentiometerLastValue)
+ {
+  potentiometerLastValue = potentiometerNewValue;
+  new_event = EV_POT_INCREASED;
+  return true;
+ }
 
-  if(potentiometerNewValue < potentiometerLastValue)
-  {
-    potentiometerLastValue = potentiometerNewValue;
-    new_event = EV_POT_DECREASED;
-    return true;
-  }
+ if (potentiometerNewValue < potentiometerLastValue)
+ {
+  potentiometerLastValue = potentiometerNewValue;
+  new_event = EV_POT_DECREASED;
+  return true;
+ }
 
-  return false;
+ return false;
 }
 
 bool presence_sensor()
@@ -221,9 +209,9 @@ bool presence_sensor()
   return false;
 
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = INVERSE_PRESENCE_SENSOR        ? ((value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED)
-             : ((value < PRECENSE_THRESHOLD) ? EV_PILL_DETECTED
-                                            : EV_PILL_NOT_DETECTED);
+ new_event = INVERSE_PRESENCE_SENSOR ? ((value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED)
+                                     : ((value < PRECENSE_THRESHOLD) ? EV_PILL_DETECTED
+                                                                     : EV_PILL_NOT_DETECTED);
 
  return true;
 }
