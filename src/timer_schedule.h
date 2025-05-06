@@ -41,8 +41,10 @@ void searchNextSchedule(tm *timeinfo)
  {
   if (schedule[i].tm_wday < currentWeekDay)
    continue;
-  if (isScheduleAvailable(&schedule[i]) && schedule[i].tm_wday > currentWeekDay ||
-      (schedule[i].tm_hour > currentHour || (schedule[i].tm_hour == currentHour && schedule[i].tm_min > currentMinute)))
+  if (isScheduleAvailable(&schedule[i]) &&
+      (schedule[i].tm_wday > currentWeekDay ||
+       (schedule[i].tm_hour > currentHour ||
+        (schedule[i].tm_hour == currentHour && schedule[i].tm_min > currentMinute))))
   {
    Serial.println("Nuevo horario encontrado");
    nextPeriod = i;
