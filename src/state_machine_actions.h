@@ -6,15 +6,21 @@
 
 #define LCD_BLINK_TIME 5000
 #define NOTIFICATION_FRECUENCY_ALERT 1000
+#define NOTIFICATION_UNNAVAILABLE_ALERT 500
 typedef void (*action)();
 void (*setLeds[MAX_PILLS_PER_DAY])(short) = {setLedPresence_TM, setLedPresence_TT, setLedPresence_TN};
+
+bool isBelowTime(int frecuency)
+{
+ return (millis() % (frecuency * 2)) < frecuency;
+}
 
 void showHourTimerLCDCallback(void *)
 {
  getLocalTime(&timeinfo, 10); // Actualiza la hora
  char mensaje[32];            // Ajustá el tamaño según el contenido esperado
 
- if (millis() % (LCD_BLINK_TIME * 2) < LCD_BLINK_TIME)
+ if (isBelowTime(LCD_BLINK_TIME))
  {
   snprintf(mensaje, sizeof(mensaje), "Hora: %02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
  }
@@ -24,13 +30,12 @@ void showHourTimerLCDCallback(void *)
  }
 
  writeLCD(mensaje);
- Serial.println("Show hour timer LCD");
  vTaskDelay(LCD_BLINK_TIME);
 }
 
 void notifyDoseAvailableCallback(void *)
 {
- if (millis() % (NOTIFICATION_FRECUENCY_ALERT * 2) < NOTIFICATION_FRECUENCY_ALERT)
+ if (isBelowTime(NOTIFICATION_FRECUENCY_ALERT))
  {
   setLeds[objetivePeriod](HIGH);
   writeLCD("Dose available");
@@ -44,6 +49,23 @@ void notifyDoseAvailableCallback(void *)
  }
  vTaskDelay(NOTIFICATION_FRECUENCY_ALERT);
 }
+void notifyDoseUnavailableCallback(void *)
+{
+ if (isBelowTime(NOTIFICATION_UNNAVAILABLE_ALERT))
+ {
+  setLeds[objetivePeriod](HIGH);
+  writeLCD("No pill detected...");
+  stopBuzzer();
+ }
+ else
+ {
+  setLeds[objetivePeriod](LOW);
+  writeLCD("Fill the dispenser");
+  startBuzzer();
+ }
+ vTaskDelay(NOTIFICATION_UNNAVAILABLE_ALERT);
+}
+
 void notifyDoseAvailable(void *)
 {
  while (1)
@@ -57,6 +79,14 @@ void showHourTimerLCD(void *)
  while (1)
  {
   waitForSemaphore(showHourTimerLCDCallback, NULL, showTimerSemaphore); // Espera a que el semáforo esté disponible
+ }
+}
+
+void notifyDoseUnnavailable(void *)
+{
+ while (1)
+ {
+  waitForSemaphore(notifyDoseUnavailableCallback, NULL, noPillNotificationSemaphore);
  }
 }
 // Actions
@@ -89,9 +119,14 @@ void initialize()
  showTimerSemaphore = xSemaphoreCreateMutex();
  lcdMutex = xSemaphoreCreateMutex();
  notificationSemaphore = xSemaphoreCreateMutex();
+ noPillNotificationSemaphore = xSemaphoreCreateMutex();
+
  xSemaphoreTake(notificationSemaphore, 0);
+ xSemaphoreTake(noPillNotificationSemaphore, 0);
+
  xTaskCreate(showHourTimerLCD, "showHourTimerLCD", 2048, NULL, 1, NULL);
  xTaskCreate(notifyDoseAvailable, "notifyDoseAvailable", 2048, NULL, 1, NULL);
+ xTaskCreate(notifyDoseUnnavailable, "notifyDoseUnnavailable", 2048, NULL, 1, NULL);
 }
 
 void noScheduleSet();
@@ -99,6 +134,8 @@ void settingSchedule();
 void awaitingTimer();
 void scanning()
 {
+ setLeds[objetivePeriod](LOW);
+ stopBuzzer();
  stopMotor();
  DebugPrint("Scanning");
 };
@@ -119,7 +156,10 @@ void none()
 }
 void doseTaken()
 {
+ xSemaphoreTake(noPillNotificationSemaphore, 0);
  xSemaphoreTake(notificationSemaphore, 0);
+ setLeds[objetivePeriod](LOW);
+ stopBuzzer();
  writeLCD("Dose taken\nReturning...");
  startMotorLeft();
 }
@@ -141,7 +181,6 @@ void moving()
 {
  Serial.println("Moving...");
  xSemaphoreTake(showTimerSemaphore, 0);
- Serial.println(uxSemaphoreGetCount(showTimerSemaphore)); // No lo toma
  writeLCD("Moving...");
  setDayAndPeriod();
  startMotorRight();
@@ -154,11 +193,15 @@ void pillDetected()
 }
 void noPillDetected()
 {
- writeLCD("No pill detected");
  Serial.println("No pill detected...");
+ xSemaphoreGive(noPillNotificationSemaphore);
 }
 void doseSkipped()
 {
+ xSemaphoreTake(notificationSemaphore, 0);
+ xSemaphoreTake(noPillNotificationSemaphore, 0);
+ setLeds[objetivePeriod](LOW);
+ stopBuzzer();
  Serial.println("Dose skipped...");
  writeLCD("Dose skipped\nReturning...");
  startMotorLeft();
