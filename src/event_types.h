@@ -194,9 +194,9 @@ bool presence_sensor()
   return false;
 
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = INVERSE_PRESENCE_SENSOR        ? (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED
-             : (value < PRECENSE_THRESHOLD) ? EV_PILL_DETECTED
-                                            : EV_PILL_NOT_DETECTED;
+ new_event = INVERSE_PRESENCE_SENSOR        ? ((value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED)
+             : ((value < PRECENSE_THRESHOLD) ? EV_PILL_DETECTED
+                                            : EV_PILL_NOT_DETECTED);
 
  return true;
 }
