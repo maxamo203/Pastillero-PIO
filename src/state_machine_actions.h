@@ -22,11 +22,11 @@ void showHourTimerLCDCallback(void *)
 
  if (isBelowTime(LCD_BLINK_TIME))
  {
-  snprintf(mensaje, sizeof(mensaje), "Hora: %02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
+  snprintf(mensaje, sizeof(mensaje), "Hour: %02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
  }
  else
  {
-  snprintf(mensaje, sizeof(mensaje), "Proxima toma: \n%02d:%02d %s", schedule[nextPeriod].tm_hour, schedule[nextPeriod].tm_min, weekDays[schedule[nextPeriod].tm_wday]);
+  snprintf(mensaje, sizeof(mensaje), "Next dose: \n%02d:%02d %s", schedule[nextPeriod].tm_hour, schedule[nextPeriod].tm_min, weekDays[schedule[nextPeriod].tm_wday]);
  }
 
  writeLCD(mensaje);
@@ -132,18 +132,14 @@ void initialize()
 void noScheduleSet();
 void settingSchedule();
 void awaitingTimer();
-void scanning()
-{
- setLeds[objetivePeriod](LOW);
- stopBuzzer();
- stopMotor();
- DebugPrint("Scanning");
-};
+void scanning();
 void pillDetected();
 void noPillDetected();
 void doseTaken();
 void stopReturning();
 void doseSkipped();
+void reanudeCycle();
+void pauseCycle();
 
 void error();
 void none();
@@ -185,6 +181,13 @@ void moving()
  setDayAndPeriod();
  startMotorRight();
 }
+void scanning()
+{
+ setLeds[objetivePeriod](LOW);
+ stopBuzzer();
+ stopMotor();
+ DebugPrint("Scanning");
+}
 void pillDetected()
 {
  writeLCD("Pill detected");
@@ -215,4 +218,13 @@ void noScheduleSet()
 {
  Serial.println("No schedule set...");
  xSemaphoreGive(showTimerSemaphore);
+}
+void reanudeCycle()
+{
+ xSemaphoreGive(showTimerSemaphore);
+}
+void pauseCycle()
+{
+ xSemaphoreTake(showTimerSemaphore, 0);
+ writeLCD("Cycle paused\nPress button to resume...");
 }
