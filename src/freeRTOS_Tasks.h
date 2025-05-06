@@ -21,7 +21,7 @@ void showHourTimerLCDCallback(void *)
 
  if (isBelowTime(LCD_BLINK_TIME))
  {
-  snprintf(mensaje, sizeof(mensaje), "Hour: %02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
+  snprintf(mensaje, sizeof(mensaje), "Time: %02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
  }
  else
  {
