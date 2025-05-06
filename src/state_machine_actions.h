@@ -62,16 +62,7 @@ void showHourTimerLCD(void *)
 // Actions
 void initialize()
 {
- /*
- int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY] = {
-     {6, 14, 21}, // Domingo Mañana, Domingo Tarde, Domingo Noche
-     {6, 0, 0},
-     {6, 0, 0},
-     {0, 0, 0},
-     {0, 0, 0},
-     {0, 0, 0},
-     {0, 0, 0}};
-     */
+
  configSetup();
 
  // Lee archivo con horarios y dias
@@ -84,14 +75,13 @@ void initialize()
  setupTime();
 
  createNewScheduledTimer();
- timeEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(events));
- buttonEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(short));
- showTimerSemaphore = xSemaphoreCreateMutex();
- lcdMutex = xSemaphoreCreateMutex();
- notificationSemaphore = xSemaphoreCreateMutex();
- xSemaphoreTake(notificationSemaphore, 0);
+
+ queueSetup();
+ semaphoreSetup();
+
  xTaskCreate(showHourTimerLCD, "showHourTimerLCD", 2048, NULL, 1, NULL);
  xTaskCreate(notifyDoseAvailable, "notifyDoseAvailable", 2048, NULL, 1, NULL);
+ 
 }
 
 void noScheduleSet();
@@ -117,6 +107,15 @@ void error()
 void none()
 {
 }
+
+void modifyVolume()
+{
+ setVolumeBuzzer(potentiometerLastValue);
+
+ Serial.print("New volume: ");
+ Serial.println(potentiometerLastValue);
+}
+
 void doseTaken()
 {
  xSemaphoreTake(notificationSemaphore, 0);

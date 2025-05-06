@@ -2,8 +2,8 @@
 #include "fisical.h"
 #include "freeRTOS_Objects.h"
 
-#define MAX_EVENTS 32
-#define MAX_TYPE_EVENTS 6
+#define MAX_EVENTS 34
+#define MAX_TYPE_EVENTS 7
 #define MAX_DAYS 7
 #define MAX_PILLS_PER_DAY 3
 #define MAX_PERIODS (MAX_PILLS_PER_DAY * MAX_DAYS)
@@ -39,6 +39,8 @@ enum events
  EV_BUTTON_1_LONG_PRESS,
  EV_BUTTON_2_LONG_PRESS,
  EV_BUTTON_3_LONG_PRESS,
+ EV_POT_INCREASED,
+ EV_POT_DECREASED,
  EV_LIMIT_SWITCH_MOVING,
  EV_LIMIT_SWITCH_START,
  EV_PILL_DETECTED,
@@ -75,6 +77,8 @@ String events_s[] = {
     "EV_BUTTON_1_LONG_PRESS",
     "EV_BUTTON_2_LONG_PRESS",
     "EV_BUTTON_3_LONG_PRESS",
+    "EV_POT_INCREASED",
+    "EV_POT_DECREASED",
     "EV_LIMIT_SWITCH_MOVING",
     "EV_LIMIT_SWITCH_START",
     "EV_PILL_DETECTED",
@@ -88,13 +92,14 @@ bool button_2_sensor();
 bool button_3_sensor();
 bool limit_switch_moving_sensor();
 bool presence_sensor();
+bool potentiometer_sensor();
 
 //----------------------------------------------
 // The setDayAndPeriod function calculates and sets the objectiveDay and objectivePeriod based on the value of new_event. If new_event exceeds the MAX_PERIODS threshold, it resets both values to -1; otherwise, it determines the day and period using division and modulo operations with MAX_PILLS_PER_DAY.
 void setDayAndPeriod();
 
 typedef bool (*eventType)();
-eventType event_type[MAX_TYPE_EVENTS] = {time_sensor, button_1_sensor, button_2_sensor, button_3_sensor, limit_switch_moving_sensor, presence_sensor};
+eventType event_type[MAX_TYPE_EVENTS] = {time_sensor, button_1_sensor, button_2_sensor, button_3_sensor, limit_switch_moving_sensor, presence_sensor, potentiometer_sensor};
 
 short objetiveDay = NO_PILL_TOOKING;
 short objetivePeriod = NO_PILL_TOOKING;
@@ -184,6 +189,27 @@ bool limit_switch_moving_sensor()
  }
  // TODO: Implementar la función para detectar el interruptor de límite en movimiento
  return false;
+}
+
+bool potentiometer_sensor()
+{
+  long potentiometerNewValue = readPotentiometer();
+
+  if(potentiometerNewValue > potentiometerLastValue)
+  {
+    potentiometerLastValue = potentiometerNewValue;
+    new_event = EV_POT_INCREASED;
+    return true;
+  }
+
+  if(potentiometerNewValue < potentiometerLastValue)
+  {
+    potentiometerLastValue = potentiometerNewValue;
+    new_event = EV_POT_DECREASED;
+    return true;
+  }
+
+  return false;
 }
 
 bool presence_sensor()

@@ -125,3 +125,17 @@ void detectButtonPress()
  xQueueSend(buttonEventsQueue, &buttonState, 0); // Enviar evento de botón a la cola
                                                  //  }
 }
+
+void queueSetup()
+{
+  timeEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(events));
+  buttonEventsQueue = xQueueCreate(MAX_EVENTS_QUEUE, sizeof(short));
+}
+
+void semaphoreSetup()
+{
+  showTimerSemaphore = xSemaphoreCreateMutex();
+  lcdMutex = xSemaphoreCreateMutex();
+  notificationSemaphore = xSemaphoreCreateMutex();
+  xSemaphoreTake(notificationSemaphore, 0);
+}
