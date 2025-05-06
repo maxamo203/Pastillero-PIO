@@ -14,7 +14,7 @@ const char *ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = -4 * 3600;
 const int daylightOffset_sec = 3600;
 
-const char *weekDays[] = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
+const char *weekDays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
 void handleTimerCallback(TimerHandle_t xTimer);
 void createNewScheduledTimer();

@@ -2,8 +2,14 @@
 #include "fisical.h"
 #include "freeRTOS_Objects.h"
 
+
 #define MAX_EVENTS 34
 #define MAX_TYPE_EVENTS 7
+#define INVERSE_PRESENCE_SENSOR 1 // 0-->Hay pastilla, 1-->No hay pastilla
+
+#define MAX_EVENTS 32
+#define MAX_TYPE_EVENTS 6
+
 #define MAX_DAYS 7
 #define MAX_PILLS_PER_DAY 3
 #define MAX_PERIODS (MAX_PILLS_PER_DAY * MAX_DAYS)
@@ -218,7 +224,9 @@ bool presence_sensor()
   return false;
 
  short value = presenceSensorsArray[objetivePeriod]();
- new_event = (value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED;
+ new_event = INVERSE_PRESENCE_SENSOR        ? ((value > PRECENSE_THRESHOLD) ? EV_PILL_DETECTED : EV_PILL_NOT_DETECTED)
+             : ((value < PRECENSE_THRESHOLD) ? EV_PILL_DETECTED
+                                            : EV_PILL_NOT_DETECTED);
 
  return true;
 }
