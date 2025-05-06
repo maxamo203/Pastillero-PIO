@@ -39,6 +39,8 @@
 #define LCD_COLUMNS 16   // Número de columnas del LCD
 #define LCD_ROWS 2       // Número de filas del LCD
 
+#define MIN_VOL 0
+#define MAX_VOL 255
 void fisicalSetup();
 short readPresenceSensor_TM();
 short readPresenceSensor_TT();
@@ -50,6 +52,7 @@ void stopBuzzer();
 short readPotentiometer();
 
 short buzzerVolume = 255;
+short potentiometerLastValue;
 
 short readPresenceSensor_TM()
 {
@@ -102,9 +105,9 @@ void setLedPresence_TN(short value)
  digitalWrite(PRESENCE_LED_3, value); // Enciende o apaga el LED del sensor de presencia 3
 }
 
-void setVolumeBuzzer(short volume)
+void setVolumeBuzzer(long volume)
 {
- if (volume < 0 || volume > 255)
+ if (volume < MIN_VOL || volume > MAX_VOL)
  {
   DebugPrint("Error: Volumen fuera de rango (0-255).");
   return; // Retorna si el volumen está fuera de rango
@@ -125,6 +128,14 @@ void stopMotor()
 {
  stopMotor(EN_PIN_PUENTE_H, IN1_PIN_PUENTE_H, IN2_PIN_PUENTE_H); // Detiene el motor
 }
+
+
+
+void potentiometerSetup()
+{
+ potentiometerLastValue = readPotentiometer(POTENTIOMETER_PIN);
+}
+
 
 void fisicalSetup()
 {
@@ -147,4 +158,6 @@ void fisicalSetup()
  pinMode(IN2_PIN_PUENTE_H, OUTPUT);
  pinMode(EN_PIN_PUENTE_H, OUTPUT);
  setupLCD(); // Inicializa la pantalla LCD
+
+ potentiometerSetup();
 }
