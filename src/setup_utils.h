@@ -137,5 +137,9 @@ void semaphoreSetup()
   showTimerSemaphore = xSemaphoreCreateMutex();
   lcdMutex = xSemaphoreCreateMutex();
   notificationSemaphore = xSemaphoreCreateMutex();
+  noPillNotificationSemaphore = xSemaphoreCreateMutex();
+  
+  xSemaphoreTake(noPillNotificationSemaphore, 0);
   xSemaphoreTake(notificationSemaphore, 0);
 }
+
