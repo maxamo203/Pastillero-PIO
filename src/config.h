@@ -39,7 +39,7 @@ void setDefaultConfig()
  schedule[5] = {0, 54, 22, 0, 0, 0, 1, -1};
  // Martes
  schedule[6] = {0, 0, 6, 0, 0, 0, 2, -1};
- schedule[7] = {0, 11, 17, 0, 0, 0, 2, 0};
+ schedule[7] = {0, 30, 17, 0, 0, 0, 2, 0};
  schedule[8] = {0, 30, 21, 0, 0, 0, 2, -1};
  // Miércoles
  schedule[9] = {0, 0, 6, 0, 0, 0, 3, 0};
