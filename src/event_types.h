@@ -7,9 +7,6 @@
 #define MAX_TYPE_EVENTS 7
 #define INVERSE_PRESENCE_SENSOR 1 // 0-->Hay pastilla, 1-->No hay pastilla
 
-#define MAX_EVENTS 32
-#define MAX_TYPE_EVENTS 6
-
 #define MAX_DAYS 7
 #define MAX_PILLS_PER_DAY 3
 #define MAX_PERIODS (MAX_PILLS_PER_DAY * MAX_DAYS)
