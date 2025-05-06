@@ -39,6 +39,8 @@
 #define LCD_COLUMNS 16   // Número de columnas del LCD
 #define LCD_ROWS 2       // Número de filas del LCD
 
+#define MIN_VOL 0
+#define MAX_VOL 255
 void fisicalSetup();
 short readPresenceSensor_TM();
 short readPresenceSensor_TT();
@@ -105,7 +107,7 @@ void setLedPresence_TN(short value)
 
 void setVolumeBuzzer(long volume)
 {
- if (volume < 0 || volume > 255)
+ if (volume < MIN_VOL || volume > MAX_VOL)
  {
   DebugPrint("Error: Volumen fuera de rango (0-255).");
   return; // Retorna si el volumen está fuera de rango

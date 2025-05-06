@@ -7,12 +7,18 @@
 #include "state_machine.h"
 
 #define HOUR_UPDATE_INTERVAL 10000 // 10 seconds
+#define HOUR_TO_SECONDS 3600
+#define GMT_DIFFERENCE -4 
+#define TIMEOUT_SETUP 1000
+#define TIMEOUT_CREATE_TASK 5
+#define DEBOUNCE_SECONDS 200
+
 const char *ssid = "Wokwi-GUEST";
 const char *password = "";
 
 const char *ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = -4 * 3600;
-const int daylightOffset_sec = 3600;
+const long gmtOffset_sec = GMT_DIFFERENCE * HOUR_TO_SECONDS;
+const int daylightOffset_sec = HOUR_TO_SECONDS;
 
 const char *weekDays[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
@@ -50,7 +56,7 @@ void setupTime()
 {
  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
  Serial.println("Time synchronized with NTP server.");
- while (!getLocalTime(&timeinfo, 1000))
+ while (!getLocalTime(&timeinfo, TIMEOUT_SETUP))
  {
   Serial.println("Failed to obtain time");
   delay(1000);
@@ -71,7 +77,7 @@ void printLocalTime()
 void createNewScheduledTimer()
 {
 
- getLocalTime(&timeinfo, 5); // Update RTC time
+ getLocalTime(&timeinfo, TIMEOUT_CREATE_TASK); // Update RTC time
  Serial.println(String(nextPeriod) + " nextPeriod antes");
  searchNextSchedule(&timeinfo); // Set nextPeriod to the next schedule based on the current time
  Serial.println(String(nextPeriod) + " nextPeriod despues");
@@ -106,8 +112,8 @@ volatile unsigned long lastButtonPressTime = 0;
 void detectMovingLimitSwitch()
 {
  unsigned long interruptTime = millis();
- if (interruptTime - lastInterruptTime > 200)
- { // 200 ms de debounce
+ if (interruptTime - lastInterruptTime > DEBOUNCE_SECONDS)
+ { 
   limitSwitchPassed++;
   lastInterruptTime = interruptTime;
  }

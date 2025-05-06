@@ -78,35 +78,3 @@ int timeUntilNextSchedule(tm *timeinfo, tm *schedule)
  }
  return millisecondsUntilNextSchedule;
 }
-
-void setupSchedule(int scheduleSetup[MAX_DAYS][MAX_PILLS_PER_DAY])
-{
- for (int i = 0; i < MAX_DAYS; i++)
- {
-  for (int j = 0; j < MAX_PILLS_PER_DAY; j++)
-  {
-   int index = i * MAX_PILLS_PER_DAY + j;
-
-   if (scheduleSetup[i][j] != 0)
-   {
-    schedule[index] = (struct tm){
-        .tm_hour = scheduleSetup[i][j],
-        .tm_wday = i,
-        .tm_isdst = 0};
-   }
-   else
-   {
-    schedule[index] = (struct tm){
-        .tm_isdst = -1};
-   }
-  }
- }
-
- /* Con fines de debug, modificar este horario para probar, 2 es domingo noche */
-
- schedule[2] = (struct tm){
-     .tm_min = 24,
-     .tm_hour = 16,
-     .tm_wday = 0,
-     .tm_isdst = 0};
-}
